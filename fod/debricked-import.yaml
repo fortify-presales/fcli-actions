@@ -42,9 +42,9 @@ steps:
         value: ${debrickedLoginBody}        
   - requests:
       - name:   Debricked Login
-        uri:    /login_refresh
+        uri:    https://debricked.com/api/login_refresh
         method: POST
-        target: debricked-api-login
+        #target: debricked-api-login
         body:   ${debrickedLoginBody}
 
 valueTemplates:
