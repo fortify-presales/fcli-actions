@@ -25,7 +25,7 @@ parameters:
 
 addRequestTargets:
   - name: debricked-api-login
-    baseUrl: https://debricked.com/api/login_refresh
+    baseUrl: https://debricked.com/api
   - name: debricked-api
     baseUrl: https://debricked.com/api/1.0
     headers:
@@ -42,6 +42,7 @@ steps:
         value: ${debrickedLoginBody}        
   - requests:
       - name:   Debricked Login
+        uri:    /login_refresh
         method: POST
         target: debricked-api-login
         body:   ${debrickedLoginBody}
