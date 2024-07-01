@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://fortify.github.io/fcli/schemas/action/fcli-action-schema-1.0.0.json
+
+# Description: TBD
+
+author: "Fortify PreSales"
+usage:
+  header: (PREVIEW) Export Vulnerabilities from Debricked into FoD.  
+  description: |
+    TBD
+
+parameters:
+  - name: debricked-token
+    description: 'Required Debricked Token. Default value: DEBRICKED_TOKEN environment variable.'
+    required: true
+    defaultValue: ${#env('DEBRICKED_TOKEN')}
+  - name: debricked-repo
+    description: 'Required Debricked repository. Default value: Taken from DEBRICKED_REPOSITORY environment variable.'
+    required: true
+    defaultValue: ${#env('DEBRICKED_REPOSITORY')}
+  - name: dryrun
+    description: "Set to true to just output Debricked SBOM; don't actually import it into FoD."
+    type: boolean
+    required: false
+    defaultValue: false    
+
+addRequestTargets:
+  - name: debricked-api-login
+    baseUrl: https://debricked.com/api/login_refresh
+  - name: debricked-api
+    baseUrl: https://debricked.com/api/1.0
+    headers:
+      Authorization: Bearer ${parameters['debricked-token']}
+
+steps:
+  - progress: Generating Debricked JWT access token
+  - set:
+      - name: debrickedLoginBody
+        valueTemplate: debrickedLoginBody
+  - if: ${parameters.dryrun}
+    write:
+      - to: stdout
+        value: ${debrickedLoginBody}        
+  - requests:
+      - name:   Debricked Login
+        method: POST
+        target: debricked-api-login
+        body:   ${debrickedLoginBody}
+
+valueTemplates:
+  - name: debrickedLoginBody
+    contents:
+      refresh_token: ${parameters['debricked-token']}
